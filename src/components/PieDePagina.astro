@@ -1,0 +1,90 @@
+---
+import Logo from './Logo.astro';
+import Icono from './Icono.astro';
+import { getCollection } from 'astro:content';
+import { EMPRESA, whatsappUrl } from '../consts';
+
+const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden - b.data.orden);
+const anio = new Date().getFullYear();
+---
+
+<footer class="bg-azul-950 text-hormigon-300">
+  <div class="contenedor grid gap-12 py-16 md:grid-cols-12 md:py-20">
+    <div class="md:col-span-4">
+      <Logo variante="blanco" bajada />
+      <p class="mt-6 max-w-xs text-[0.9375rem] leading-relaxed">
+        Especificación, suministro e instalación de sistemas de protección para la industria
+        y la construcción de la Región del Biobío.
+      </p>
+      <a
+        href={EMPRESA.facebook}
+        target="_blank"
+        rel="noopener"
+        class="mt-6 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-azul-500"
+      >
+        <span class="sr-only">Facebook de Terrazul</span>
+        <Icono nombre="facebook" tamano={20} />
+      </a>
+    </div>
+
+    <div class="md:col-span-4">
+      <h2 class="font-display text-sm font-semibold tracking-[0.14em] text-white uppercase">
+        Servicios
+      </h2>
+      <ul class="mt-5 grid gap-3 text-[0.9375rem]">
+        {
+          servicios.map((s) => (
+            <li>
+              <a
+                href={`/servicios/${s.id}`}
+                class="transition-colors hover:text-white"
+              >
+                {s.data.titulo}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="md:col-span-4">
+      <h2 class="font-display text-sm font-semibold tracking-[0.14em] text-white uppercase">
+        Contacto
+      </h2>
+      <ul class="mt-5 grid gap-4 text-[0.9375rem]">
+        <li class="flex gap-3">
+          <Icono nombre="mapa" tamano={20} class="mt-0.5 flex-none text-azul-400" />
+          <a href={EMPRESA.mapaUrl} target="_blank" rel="noopener" class="hover:text-white">
+            {EMPRESA.direccion.calle}, {EMPRESA.direccion.comuna}<br />
+            {EMPRESA.direccion.region}
+          </a>
+        </li>
+        <li class="flex gap-3">
+          <Icono nombre="whatsapp" tamano={20} class="mt-0.5 flex-none text-azul-400" />
+          <a href={whatsappUrl()} target="_blank" rel="noopener" class="hover:text-white">
+            {EMPRESA.telefono}
+          </a>
+        </li>
+        <li class="flex gap-3">
+          <Icono nombre="correo" tamano={20} class="mt-0.5 flex-none text-azul-400" />
+          <a href={`mailto:${EMPRESA.email}`} class="break-all hover:text-white">
+            {EMPRESA.email}
+          </a>
+        </li>
+        <li class="flex gap-3">
+          <Icono nombre="reloj" tamano={20} class="mt-0.5 flex-none text-azul-400" />
+          <span>{EMPRESA.horario}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="border-t border-white/10">
+    <div
+      class="contenedor flex flex-col gap-3 py-6 text-sm text-hormigon-400 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p>© {anio} {EMPRESA.razonSocial}</p>
+      <p>Talcahuano, Región del Biobío, Chile</p>
+    </div>
+  </div>
+</footer>

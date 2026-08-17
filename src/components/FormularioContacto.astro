@@ -1,0 +1,215 @@
+---
+import { getCollection } from 'astro:content';
+import Icono from './Icono.astro';
+import { FORMULARIO, EMPRESA, whatsappUrl } from '../consts';
+
+const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden - b.data.orden);
+const usaWeb3Forms = FORMULARIO.endpoint.includes('web3forms');
+
+const campoBase =
+  'w-full rounded-md border border-hormigon-300 bg-white px-4 py-3 text-[0.9375rem] text-azul-900 transition-colors placeholder:text-hormigon-400 hover:border-hormigon-400 focus:border-azul-500 focus:outline-none';
+const etiquetaBase = 'block font-display text-sm font-semibold text-azul-900';
+---
+
+<form
+  id="form-contacto"
+  method="post"
+  action={FORMULARIO.endpoint}
+  data-email={EMPRESA.email}
+  data-whatsapp={whatsappUrl()}
+  class="grid gap-5"
+  novalidate
+>
+  {
+    usaWeb3Forms && (
+      <>
+        <input type="hidden" name="access_key" value={FORMULARIO.accessKey} />
+        <input type="hidden" name="subject" value="Nueva solicitud desde terrazulspa.cl" />
+        <input type="hidden" name="from_name" value="Web Terrazul" />
+        <input type="hidden" name="redirect" value={`${Astro.site ?? ''}gracias`} />
+      </>
+    )
+  }
+
+  <!-- Trampa antispam: invisible para personas, tentadora para bots.
+       `sitio_web` la revisa el endpoint PHP; `botcheck`, Web3Forms. -->
+  <div class="absolute -left-[9999px]" aria-hidden="true">
+    <label for="sitio-web">No completar</label>
+    <input id="sitio-web" name="sitio_web" type="text" tabindex="-1" autocomplete="off" />
+    <input name="botcheck" type="checkbox" tabindex="-1" />
+  </div>
+
+  <div class="grid gap-5 sm:grid-cols-2">
+    <div>
+      <label for="nombre" class={etiquetaBase}>Nombre y apellido *</label>
+      <input
+        id="nombre"
+        name="nombre"
+        type="text"
+        required
+        autocomplete="name"
+        class:list={['mt-2', campoBase]}
+        placeholder="Ej: Carla Muñoz"
+      />
+      <p class="error mt-1.5 hidden text-sm text-oxido-700"></p>
+    </div>
+
+    <div>
+      <label for="empresa" class={etiquetaBase}>Empresa u obra</label>
+      <input
+        id="empresa"
+        name="empresa"
+        type="text"
+        autocomplete="organization"
+        class:list={['mt-2', campoBase]}
+        placeholder="Ej: Planta Coronel"
+      />
+    </div>
+
+    <div>
+      <label for="email" class={etiquetaBase}>Correo *</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        required
+        autocomplete="email"
+        class:list={['mt-2', campoBase]}
+        placeholder="nombre@empresa.cl"
+      />
+      <p class="error mt-1.5 hidden text-sm text-oxido-700"></p>
+    </div>
+
+    <div>
+      <label for="telefono" class={etiquetaBase}>Teléfono</label>
+      <input
+        id="telefono"
+        name="telefono"
+        type="tel"
+        autocomplete="tel"
+        class:list={['mt-2', campoBase]}
+        placeholder="+56 9 ..."
+      />
+    </div>
+  </div>
+
+  <div>
+    <label for="servicio" class={etiquetaBase}>¿Qué necesitas?</label>
+    <select id="servicio" name="servicio" class:list={['mt-2', campoBase]}>
+      <option value="">Selecciona un servicio</option>
+      {servicios.map((s) => <option value={s.data.titulo}>{s.data.titulo}</option>)}
+      <option value="Compra de productos">Solo compra de productos</option>
+      <option value="Otro">Otro / no estoy seguro</option>
+    </select>
+  </div>
+
+  <div>
+    <label for="mensaje" class={etiquetaBase}>Cuéntanos el problema *</label>
+    <textarea
+      id="mensaje"
+      name="mensaje"
+      rows="6"
+      required
+      class:list={['mt-2 resize-y', campoBase]}
+      placeholder="Dónde está el problema, hace cuánto, qué superficie aproximada y si la planta puede detenerse."></textarea>
+    <p class="error mt-1.5 hidden text-sm text-oxido-700"></p>
+  </div>
+
+  <div class="mt-2 flex flex-wrap items-center gap-4">
+    <button type="submit" class="btn btn-primario">
+      <span data-texto-boton>Enviar solicitud</span>
+      <Icono nombre="flecha" tamano={18} />
+    </button>
+    <p class="text-sm text-hormigon-500">Te respondemos en horario hábil.</p>
+  </div>
+
+  <p
+    id="respuesta-form"
+    role="status"
+    aria-live="polite"
+    class="hidden rounded-md px-4 py-3 text-[0.9375rem]"
+  >
+  </p>
+</form>
+
+<script>
+  const form = document.getElementById('form-contacto') as HTMLFormElement | null;
+  if (form) {
+    const respuesta = document.getElementById('respuesta-form')!;
+    const boton = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const textoBoton = boton.querySelector<HTMLElement>('[data-texto-boton]')!;
+    const textoOriginal = textoBoton.textContent ?? 'Enviar solicitud';
+
+    const mostrarError = (campo: HTMLElement, mensaje: string) => {
+      const p = campo.parentElement?.querySelector<HTMLElement>('.error');
+      if (!p) return;
+      p.textContent = mensaje;
+      p.classList.toggle('hidden', !mensaje);
+      campo.setAttribute('aria-invalid', mensaje ? 'true' : 'false');
+      campo.classList.toggle('border-oxido-700', Boolean(mensaje));
+    };
+
+    const validar = () => {
+      let ok = true;
+      const reglas: [string, (v: string) => string][] = [
+        ['nombre', (v) => (v.trim().length < 2 ? 'Necesitamos tu nombre.' : '')],
+        [
+          'email',
+          (v) => (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) ? '' : 'Revisa el correo.'),
+        ],
+        [
+          'mensaje',
+          (v) => (v.trim().length < 10 ? 'Cuéntanos un poco más para poder ayudarte.' : ''),
+        ],
+      ];
+
+      for (const [nombre, regla] of reglas) {
+        const campo = form.elements.namedItem(nombre) as HTMLInputElement;
+        const error = regla(campo.value);
+        mostrarError(campo, error);
+        if (error && ok) {
+          campo.focus();
+          ok = false;
+        }
+      }
+      return ok;
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!validar()) return;
+
+      boton.disabled = true;
+      textoBoton.textContent = 'Enviando…';
+      respuesta.className = 'hidden';
+
+      try {
+        const peticion = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        const datos = await peticion.json().catch(() => ({ ok: peticion.ok }));
+
+        // El endpoint PHP responde { ok }; Web3Forms responde { success }.
+        const enviado = datos.ok ?? datos.success ?? peticion.ok;
+        if (!peticion.ok || !enviado) throw new Error(datos.error ?? datos.message ?? 'Error de envío');
+
+        form.reset();
+        respuesta.className =
+          'rounded-md border border-azul-200 bg-azul-50 px-4 py-3 text-[0.9375rem] text-azul-800';
+        respuesta.textContent =
+          '¡Listo! Recibimos tu solicitud y te contactamos a la brevedad en horario hábil.';
+      } catch {
+        respuesta.className =
+          'rounded-md border border-oxido-200 bg-oxido-50 px-4 py-3 text-[0.9375rem] text-oxido-700';
+        const correo = form.dataset.email ?? '';
+        const wsp = form.dataset.whatsapp ?? '#';
+        respuesta.innerHTML = `No pudimos enviar el formulario. Escríbenos directo a <a class="font-semibold underline" href="mailto:${correo}">${correo}</a> o por <a class="font-semibold underline" href="${wsp}" target="_blank" rel="noopener">WhatsApp</a>.`;
+      } finally {
+        boton.disabled = false;
+        textoBoton.textContent = textoOriginal;
+      }
+    });
+  }
+</script>

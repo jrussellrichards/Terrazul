@@ -1,0 +1,39 @@
+---
+import Icono from './Icono.astro';
+import { PREGUNTAS } from '../consts';
+
+/** Datos estructurados de FAQ: habilita el resultado enriquecido en Google. */
+const esquema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: PREGUNTAS.map((p) => ({
+    '@type': 'Question',
+    name: p.pregunta,
+    acceptedAnswer: { '@type': 'Answer', text: p.respuesta },
+  })),
+};
+---
+
+<div class="grid gap-2">
+  {
+    PREGUNTAS.map((p) => (
+      <details class="tarjeta revelar group px-6 open:border-azul-200 open:shadow-suave">
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-5 font-display text-[1.0625rem] font-semibold text-azul-900 marker:hidden">
+          {p.pregunta}
+          <span class="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-azul-50 text-azul-600 transition-transform duration-300 group-open:rotate-45">
+            <Icono nombre="mas" tamano={18} />
+          </span>
+        </summary>
+        <p class="pb-6 text-[0.9375rem] leading-relaxed text-hormigon-600">{p.respuesta}</p>
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  summary::-webkit-details-marker {
+    display: none;
+  }
+</style>
+
+<script is:inline type="application/ld+json" set:html={JSON.stringify(esquema)} />

@@ -1,0 +1,99 @@
+---
+import { getCollection } from 'astro:content';
+
+import Base from '../../layouts/Base.astro';
+import TarjetaServicio from '../../components/TarjetaServicio.astro';
+import LlamadoAccion from '../../components/LlamadoAccion.astro';
+import TituloSeccion from '../../components/TituloSeccion.astro';
+import Icono from '../../components/Icono.astro';
+import { PROCESO } from '../../consts';
+
+const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden - b.data.orden);
+---
+
+<Base
+  titulo="Servicios de impermeabilización y protección industrial"
+  descripcion="Seis líneas de servicio para industria y construcción en el Biobío: impermeabilización, pisos industriales, sellado de juntas, refuerzos estructurales, grouting y obras de mantención."
+>
+  <!-- Encabezado de página -->
+  <section class="border-b border-hormigon-200 bg-hormigon-50">
+    <div class="contenedor py-16 lg:py-24">
+      <nav aria-label="Ruta de navegación" class="mb-6 text-sm text-hormigon-500">
+        <a href="/" class="hover:text-azul-600">Inicio</a>
+        <span class="mx-2 text-hormigon-300">/</span>
+        <span class="text-azul-900">Servicios</span>
+      </nav>
+
+      <div class="max-w-3xl">
+        <p class="antetitulo">Qué hacemos</p>
+        <h1 class="mt-5 text-h1">
+          Sistemas de protección para estructuras que trabajan.
+        </h1>
+        <p class="mt-6 text-lead text-hormigon-600">
+          Cubrimos las tres etapas de cada línea de servicio —especificación, suministro e
+          instalación— para que no tengas que coordinar a un proyectista, un distribuidor y un
+          contratista por separado.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Grilla de servicios -->
+  <section class="seccion">
+    <div class="contenedor">
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {servicios.map((servicio) => <TarjetaServicio servicio={servicio} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Distribución -->
+  <section class="seccion bg-hormigon-50">
+    <div class="contenedor grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+      <TituloSeccion
+        antetitulo="Séptima línea"
+        titulo="Distribución y comercialización"
+        bajada="Comercializamos soluciones y productos de marcas reconocidas para la industria y la construcción. Si tu equipo va a ejecutar el trabajo, te vendemos el sistema correcto y te explicamos cómo aplicarlo."
+      />
+      <ul class="revelar grid gap-3">
+        {
+          [
+            'Membranas, morteros, resinas y sellos con ficha técnica de respaldo.',
+            'Asesoría de especificación antes de la compra, sin costo.',
+            'Cantidades calculadas según superficie real, para no comprar de más.',
+            'Hojas de seguridad y recomendaciones de aplicación con cada despacho.',
+          ].map((item) => (
+            <li class="flex gap-3 text-[0.9375rem] leading-relaxed text-hormigon-600">
+              <Icono nombre="check" tamano={20} class="mt-0.5 flex-none text-azul-500" />
+              {item}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Proceso -->
+  <section class="seccion">
+    <div class="contenedor">
+      <TituloSeccion
+        antetitulo="Cómo trabajamos"
+        titulo="El mismo método en todos los servicios"
+        centrado
+      />
+      <ol class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {
+          PROCESO.map((paso) => (
+            <li class="revelar border-t-2 border-hormigon-200 pt-6">
+              <span class="font-display text-4xl font-bold text-azul-100">{paso.numero}</span>
+              <h3 class="mt-3 text-[1.0625rem] font-semibold">{paso.titulo}</h3>
+              <p class="mt-2 text-[0.9375rem] leading-relaxed text-hormigon-600">{paso.texto}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <LlamadoAccion />
+</Base>

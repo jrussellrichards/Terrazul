@@ -1,0 +1,234 @@
+---
+import Logo from './Logo.astro';
+import Icono from './Icono.astro';
+import { NAVEGACION, EMPRESA, whatsappUrl } from '../consts';
+
+interface Props {
+  /** En páginas con hero oscuro la barra parte transparente y se solidifica al hacer scroll. */
+  sobreHeroOscuro?: boolean;
+}
+
+const { sobreHeroOscuro = false } = Astro.props;
+const rutaActual = Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/';
+
+const esActivo = (href: string) => href !== '/' && !href.includes('#') && rutaActual.startsWith(href);
+---
+
+<a
+  href="#contenido"
+  class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-full focus:bg-azul-500 focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-white"
+>
+  Saltar al contenido
+</a>
+
+<header
+  id="barra"
+  data-transparente={sobreHeroOscuro ? 'si' : 'no'}
+  class:list={[
+    'fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,border-color] duration-300',
+    sobreHeroOscuro
+      ? 'bg-transparent border-b border-transparent'
+      : 'bg-white/90 backdrop-blur-md border-b border-hormigon-200',
+  ]}
+>
+  <div class="contenedor flex h-[4.5rem] items-center justify-between gap-4 lg:h-20">
+    <a href="/" class="grid rounded-md" aria-label="Terrazul — ir al inicio">
+      {
+        sobreHeroOscuro ? (
+          <>
+            <Logo variante="blanco" class="logo-apilado logo-negativo" />
+            <Logo variante="color" class="logo-apilado logo-positivo" />
+          </>
+        ) : (
+          <Logo variante="color" />
+        )
+      }
+    </a>
+
+    <nav aria-label="Principal" class="hidden lg:block">
+      <ul class="flex items-center gap-1">
+        {
+          NAVEGACION.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={esActivo(item.href) ? 'page' : undefined}
+                class:list={[
+                  'enlace-barra rounded-full px-4 py-2 font-display text-[0.9375rem] font-medium transition-colors',
+                  esActivo(item.href) && 'esta-activo',
+                ]}
+              >
+                {item.texto}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <a
+        href={whatsappUrl()}
+        target="_blank"
+        rel="noopener"
+        class="btn btn-primario hidden !px-5 !py-2.5 sm:inline-flex"
+      >
+        <Icono nombre="whatsapp" tamano={17} />
+        Cotizar por WhatsApp
+      </a>
+
+      <button
+        type="button"
+        id="abrir-menu"
+        class="boton-menu -mr-2 inline-flex h-11 w-11 items-center justify-center rounded-full lg:hidden"
+        aria-expanded="false"
+        aria-controls="menu-movil"
+      >
+        <span class="sr-only">Abrir menú</span>
+        <Icono nombre="menu" tamano={24} />
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Menú móvil -->
+<div
+  id="menu-movil"
+  hidden
+  class="fixed inset-0 z-[60] bg-azul-950/95 backdrop-blur-sm lg:hidden"
+>
+  <div class="contenedor flex h-[4.5rem] items-center justify-between">
+    <Logo variante="blanco" />
+    <button
+      type="button"
+      id="cerrar-menu"
+      class="-mr-2 inline-flex h-11 w-11 items-center justify-center rounded-full text-white hover:bg-white/10"
+    >
+      <span class="sr-only">Cerrar menú</span>
+      <Icono nombre="cerrar" tamano={24} />
+    </button>
+  </div>
+
+  <nav aria-label="Principal (móvil)" class="contenedor mt-6">
+    <ul class="flex flex-col gap-1">
+      {
+        NAVEGACION.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class="flex items-center justify-between rounded-xl px-4 py-4 font-display text-2xl font-semibold text-white transition-colors hover:bg-white/10"
+            >
+              {item.texto}
+              <Icono nombre="flecha-diagonal" tamano={20} class="text-azul-300" />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="mt-8 grid gap-3">
+      <a href={whatsappUrl()} target="_blank" rel="noopener" class="btn btn-primario w-full">
+        <Icono nombre="whatsapp" tamano={18} />
+        Cotizar por WhatsApp
+      </a>
+      <a href={`tel:${EMPRESA.telefonoE164}`} class="btn btn-fantasma w-full">
+        <Icono nombre="telefono" tamano={18} />
+        {EMPRESA.telefono}
+      </a>
+    </div>
+  </nav>
+</div>
+
+<style>
+  /* Estado base de los enlaces según el fondo de la barra */
+  #barra[data-transparente='si'] .enlace-barra,
+  #barra[data-transparente='si'] .boton-menu {
+    color: rgb(255 255 255 / 0.85);
+  }
+  #barra[data-transparente='si'] .enlace-barra:hover,
+  #barra[data-transparente='si'] .boton-menu:hover {
+    color: white;
+    background-color: rgb(255 255 255 / 0.12);
+  }
+
+  #barra[data-transparente='no'] .enlace-barra,
+  #barra[data-transparente='no'] .boton-menu,
+  #barra.solida .enlace-barra,
+  #barra.solida .boton-menu {
+    color: var(--color-hormigon-700);
+  }
+  #barra[data-transparente='no'] .enlace-barra:hover,
+  #barra[data-transparente='no'] .boton-menu:hover,
+  #barra.solida .enlace-barra:hover,
+  #barra.solida .boton-menu:hover {
+    color: var(--color-azul-600);
+    background-color: var(--color-azul-50);
+  }
+
+  .enlace-barra.esta-activo {
+    color: var(--color-azul-600) !important;
+  }
+  #barra[data-transparente='si']:not(.solida) .enlace-barra.esta-activo {
+    color: white !important;
+  }
+
+  /* Al hacer scroll, la barra transparente se vuelve sólida */
+  #barra.solida {
+    background-color: rgb(255 255 255 / 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom-color: var(--color-hormigon-200);
+    box-shadow: var(--shadow-suave);
+  }
+
+  /* Las dos versiones del lockup ocupan la misma celda y se alternan.
+     Van con :global() porque el <Logo> es un componente hijo y no recibe
+     el atributo de scope de este archivo. */
+  :global(.logo-apilado) {
+    grid-area: 1 / 1;
+    transition: opacity 0.25s var(--ease-marca);
+  }
+  #barra:not(.solida) :global(.logo-positivo),
+  #barra.solida :global(.logo-negativo) {
+    opacity: 0;
+  }
+  #barra.solida :global(.logo-positivo),
+  #barra:not(.solida) :global(.logo-negativo) {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  const barra = document.getElementById('barra')!;
+  const menu = document.getElementById('menu-movil')!;
+  const abrir = document.getElementById('abrir-menu')!;
+  const cerrar = document.getElementById('cerrar-menu')!;
+
+  /* --- Barra sólida al hacer scroll (solo sobre heros oscuros) --- */
+  if (barra.dataset.transparente === 'si') {
+    const actualizarBarra = () => barra.classList.toggle('solida', window.scrollY > 24);
+    actualizarBarra();
+    window.addEventListener('scroll', actualizarBarra, { passive: true });
+  }
+
+  /* --- Menú móvil --- */
+  function abrirMenu() {
+    menu.hidden = false;
+    abrir.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+    menu.querySelector<HTMLAnchorElement>('a')?.focus();
+  }
+
+  function cerrarMenu() {
+    menu.hidden = true;
+    abrir.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    abrir.focus();
+  }
+
+  abrir.addEventListener('click', abrirMenu);
+  cerrar.addEventListener('click', cerrarMenu);
+  menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', cerrarMenu));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !menu.hidden) cerrarMenu();
+  });
+</script>

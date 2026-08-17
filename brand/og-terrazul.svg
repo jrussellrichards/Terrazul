@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#071A2F"/>
+      <stop offset="1" stop-color="#103763"/>
+    </linearGradient>
+    <!-- Ruido tenue: rompe el bandeado del degradado al exportar a PNG -->
+    <filter id="ruido" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#fondo)"/>
+  <rect width="1200" height="630" filter="url(#ruido)" opacity="0.05"/>
+
+  <!-- Trama de arcos concéntricos, derivada del isotipo -->
+  <g transform="translate(880 120) scale(9)" fill="none" stroke="#4A8BE2" stroke-opacity="0.16" stroke-width="1.1">
+    <path d="M10 41V22a14 14 0 0 1 28 0v19"/>
+    <path d="M2 41V22a22 22 0 0 1 44 0v19"/>
+    <path d="M18 41V22a6 6 0 0 1 12 0v19"/>
+  </g>
+
+  <!-- Isotipo en negativo -->
+  <g transform="translate(72 60) scale(1.35)">
+    <path d="M10 41V22a14 14 0 0 1 28 0v19" fill="none" stroke="#FFFFFF" stroke-width="7"/>
+    <path d="M24 16c3.2 4.4 6.4 7.9 6.4 10.6a6.4 6.4 0 1 1-12.8 0c0-2.7 3.2-6.2 6.4-10.6Z" fill="#FFFFFF"/>
+    <rect x="4" y="38" width="40" height="6" rx="3" fill="#FFFFFF"/>
+  </g>
+  <text x="152" y="112" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="700"
+        letter-spacing="-1.6" fill="#FFFFFF">Terrazul</text>
+
+  <!-- Barra de acento -->
+  <rect x="72" y="212" width="56" height="5" rx="2.5" fill="#D9622B"/>
+
+  <!-- Titular -->
+  <text font-family="Arial, Helvetica, sans-serif" font-size="62" font-weight="700"
+        letter-spacing="-2.2" fill="#FFFFFF">
+    <tspan x="72" y="296">Protegemos las instalaciones</tspan>
+    <tspan x="72" y="368">que sostienen tu operación.</tspan>
+  </text>
+
+  <!-- Servicios -->
+  <text x="72" y="446" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="400" fill="#ADCDF4">
+    Impermeabilización · Pisos industriales · Refuerzo estructural
+  </text>
+
+  <!-- Pie -->
+  <rect x="72" y="516" width="1056" height="1" fill="#FFFFFF" fill-opacity="0.15"/>
+  <text x="72" y="558" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700"
+        letter-spacing="2.4" fill="#7CADEC">TALCAHUANO · REGIÓN DEL BIOBÍO</text>
+  <text x="1128" y="558" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="23"
+        font-weight="700" letter-spacing="0.5" fill="#FFFFFF">terrazulspa.cl</text>
+</svg>

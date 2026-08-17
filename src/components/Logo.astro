@@ -1,0 +1,56 @@
+---
+/**
+ * Lockup horizontal: isotipo + logotipo.
+ * El texto se compone en vivo con Archivo, así el logo queda nítido en
+ * cualquier densidad de pantalla y accesible para lectores de pantalla.
+ * Construcción y zona de protección: brand/MANUAL-DE-MARCA.md §4.
+ */
+interface Props {
+  variante?: 'color' | 'blanco';
+  bajada?: boolean;
+  class?: string;
+}
+
+const { variante = 'color', bajada = false, class: clase = '' } = Astro.props;
+
+const colorArco = variante === 'blanco' ? '#FFFFFF' : '#1E6BD6';
+const colorSolido = variante === 'blanco' ? '#FFFFFF' : '#0C2745';
+---
+
+<span class:list={['inline-flex items-center gap-2.5', clase]}>
+  <svg
+    viewBox="0 0 48 48"
+    class="h-9 w-9 flex-none sm:h-10 sm:w-10"
+    role="img"
+    aria-label="Terrazul"
+  >
+    <path
+      d="M10 41V22a14 14 0 0 1 28 0v19"
+      fill="none"
+      stroke={colorArco}
+      stroke-width="7"></path>
+    <path
+      d="M24 16c3.2 4.4 6.4 7.9 6.4 10.6a6.4 6.4 0 1 1-12.8 0c0-2.7 3.2-6.2 6.4-10.6Z"
+      fill={colorSolido}></path>
+    <rect x="4" y="38" width="40" height="6" rx="3" fill={colorSolido}></rect>
+  </svg>
+
+  <span class="flex flex-col leading-none">
+    <span
+      class="font-display text-[1.375rem] font-bold tracking-[-0.03em] sm:text-2xl"
+      style={`color:${colorSolido}`}
+    >
+      Terrazul
+    </span>
+    {
+      bajada && (
+        <span
+          class="mt-1 font-display text-[0.5625rem] font-semibold tracking-[0.18em] uppercase"
+          style={`color:${variante === 'blanco' ? '#7CADEC' : '#6B7A8D'}`}
+        >
+          Protección industrial
+        </span>
+      )
+    }
+  </span>
+</span>

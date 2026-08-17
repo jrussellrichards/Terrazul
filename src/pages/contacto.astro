@@ -1,0 +1,173 @@
+---
+import Base from '../layouts/Base.astro';
+import Icono from '../components/Icono.astro';
+import FormularioContacto from '../components/FormularioContacto.astro';
+import Preguntas from '../components/Preguntas.astro';
+import TituloSeccion from '../components/TituloSeccion.astro';
+import { EMPRESA, whatsappUrl, formularioActivo } from '../consts';
+
+const canales = [
+  {
+    icono: 'whatsapp' as const,
+    titulo: 'WhatsApp',
+    detalle: EMPRESA.telefono,
+    nota: 'La vía más rápida. Puedes mandarnos fotos del problema.',
+    href: whatsappUrl(),
+    externo: true,
+  },
+  {
+    icono: 'telefono' as const,
+    titulo: 'Teléfono',
+    detalle: EMPRESA.telefono,
+    nota: EMPRESA.horario,
+    href: `tel:${EMPRESA.telefonoE164}`,
+    externo: false,
+  },
+  {
+    icono: 'correo' as const,
+    titulo: 'Correo',
+    detalle: EMPRESA.email,
+    nota: 'Ideal para enviar planos, especificaciones o bases de licitación.',
+    href: `mailto:${EMPRESA.email}`,
+    externo: false,
+  },
+  {
+    icono: 'mapa' as const,
+    titulo: 'Dirección comercial',
+    detalle: `${EMPRESA.direccion.calle}, ${EMPRESA.direccion.comuna}`,
+    nota: EMPRESA.direccion.region,
+    href: EMPRESA.mapaUrl,
+    externo: true,
+  },
+];
+---
+
+<Base
+  titulo="Contacto — Solicita una visita técnica"
+  descripcion="Contacta a Terrazul SpA en Talcahuano: WhatsApp +56 9 9789 0113, mlagos@terrazulspa.cl. Visita técnica y propuesta escrita para proyectos en la Región del Biobío."
+>
+  <!-- Encabezado -->
+  <section class="border-b border-hormigon-200 bg-hormigon-50">
+    <div class="contenedor py-16 lg:py-24">
+      <nav aria-label="Ruta de navegación" class="mb-6 text-sm text-hormigon-500">
+        <a href="/" class="hover:text-azul-600">Inicio</a>
+        <span class="mx-2 text-hormigon-300">/</span>
+        <span class="text-azul-900">Contacto</span>
+      </nav>
+
+      <div class="max-w-3xl">
+        <p class="antetitulo">Hablemos</p>
+        <h1 class="mt-5 text-h1">Cuéntanos qué está pasando.</h1>
+        <p class="mt-6 text-lead text-hormigon-600">
+          Mientras más contexto nos des —dónde está el problema, hace cuánto, qué superficie
+          aproximada y si la operación puede detenerse— más precisa será nuestra respuesta.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Canales + formulario -->
+  <section class="seccion">
+    <div class="contenedor grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-5">
+        <h2 class="font-display text-sm font-semibold tracking-[0.14em] text-azul-600 uppercase">
+          Canales directos
+        </h2>
+
+        <ul class="mt-6 grid gap-3">
+          {
+            canales.map((canal) => (
+              <li class="tarjeta relative p-5 transition hover:border-azul-200 hover:shadow-suave">
+                <div class="flex gap-4">
+                  <span class="flex h-11 w-11 flex-none items-center justify-center rounded-xl bg-azul-50 text-azul-600">
+                    <Icono nombre={canal.icono} tamano={21} />
+                  </span>
+                  <div class="min-w-0">
+                    <h3 class="font-display text-[0.9375rem] font-semibold">
+                      <a
+                        href={canal.href}
+                        target={canal.externo ? '_blank' : undefined}
+                        rel={canal.externo ? 'noopener' : undefined}
+                        class="after:absolute after:inset-0"
+                      >
+                        {canal.titulo}
+                      </a>
+                    </h3>
+                    <p class="mt-0.5 break-words text-[0.9375rem] text-azul-600">
+                      {canal.detalle}
+                    </p>
+                    <p class="mt-1 text-sm text-hormigon-500">{canal.nota}</p>
+                  </div>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="mt-6 rounded-lg border border-azul-200 bg-azul-50 p-6">
+          <h3 class="font-display text-[1.0625rem] font-semibold">Visita técnica</h3>
+          <p class="mt-2 text-[0.9375rem] leading-relaxed text-hormigon-600">
+            Dentro del Gran Concepción la visita para evaluar el trabajo no tiene costo. Fuera de
+            esa zona lo coordinamos según la ubicación.
+          </p>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7">
+        {
+          formularioActivo ? (
+            <div class="tarjeta p-7 shadow-suave sm:p-9">
+              <h2 class="text-h3">Escríbenos</h2>
+              <p class="mt-2 mb-8 text-[0.9375rem] text-hormigon-600">
+                Los campos con * son los mínimos para poder responderte.
+              </p>
+              <FormularioContacto />
+            </div>
+          ) : (
+            <div class="tarjeta bg-azul-900 p-7 shadow-suave sm:p-9">
+              <h2 class="text-h3 !text-white">Escríbenos ahora</h2>
+              <p class="mt-3 text-lead text-azul-100">
+                La forma más rápida de llegar a nosotros es el WhatsApp: puedes mandarnos
+                fotos del problema y solemos responder el mismo día.
+              </p>
+
+              <div class="mt-8 grid gap-3 sm:grid-cols-2">
+                <a
+                  href={whatsappUrl()}
+                  target="_blank"
+                  rel="noopener"
+                  class="btn btn-claro w-full"
+                >
+                  <Icono nombre="whatsapp" tamano={18} />
+                  {EMPRESA.telefono}
+                </a>
+                <a href={`mailto:${EMPRESA.email}`} class="btn btn-fantasma w-full">
+                  <Icono nombre="correo" tamano={18} />
+                  Enviar un correo
+                </a>
+              </div>
+
+              <p class="mt-8 border-t border-white/15 pt-6 text-sm text-azul-200">
+                Para que la primera respuesta sea útil, cuéntanos dónde está el problema,
+                hace cuánto aparece, qué superficie aproximada tiene y si la operación
+                puede detenerse.
+              </p>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Preguntas -->
+  <section class="seccion bg-hormigon-50">
+    <div class="contenedor grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-4">
+        <TituloSeccion antetitulo="Dudas habituales" titulo="Preguntas frecuentes" />
+      </div>
+      <div class="lg:col-span-8">
+        <Preguntas />
+      </div>
+    </div>
+  </section>
+</Base>

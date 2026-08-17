@@ -1,0 +1,540 @@
+@import 'tailwindcss';
+
+@import '@fontsource-variable/archivo/index.css';
+@import '@fontsource-variable/inter/index.css';
+
+/* ==========================================================================
+   TERRAZUL — Design tokens
+   Fuente de verdad: brand/MANUAL-DE-MARCA.md
+   Cualquier cambio de color, tipografía o espaciado empieza aquí.
+   ========================================================================== */
+
+/* `static` fuerza la emisión de todas las variables aunque ningún utilitario
+   las use: las figuras SVG las consumen con `var(--color-*)` directamente, y
+   sin esto Tailwind las podaría del CSS final. */
+@theme static {
+  /* --- Azul Terrazul (color principal) ---------------------------------- */
+  --color-azul-50: #eef5fd;
+  --color-azul-100: #d5e6fa;
+  --color-azul-200: #adcdf4;
+  --color-azul-300: #7cadec;
+  --color-azul-400: #4a8be2;
+  --color-azul-500: #1e6bd6;
+  --color-azul-600: #1555ae;
+  --color-azul-700: #124487;
+  --color-azul-800: #103763;
+  /* Oscuros más profundos y con sesgo frío: dan más contraste al cian
+     y evitan el azul marino plano que envejece mal. */
+  --color-azul-900: #0a2038;
+  --color-azul-950: #04131f;
+
+  /* --- Agua (acento técnico) -------------------------------------------
+     Cian de alta luminosidad. Solo sobre fondos oscuros, donde tiene contraste
+     de sobra. Es el color del agua: señala el elemento que Terrazul controla.
+     No es color de marca y nunca reemplaza al azul. */
+  --color-agua-300: #7dd3fc;
+  --color-agua-400: #38bdf8;
+  --color-agua-500: #0ea5e9;
+
+  /* --- Óxido (acento, uso ≤5% de la superficie) ------------------------- */
+  --color-oxido-50: #fbede6;
+  --color-oxido-200: #f3c9b2;
+  --color-oxido-500: #d9622b;
+  --color-oxido-700: #a8481d;
+
+  /* --- Hormigón (neutros con sesgo frío) -------------------------------- */
+  --color-hormigon-50: #f7f9fb;
+  --color-hormigon-100: #eef1f5;
+  --color-hormigon-200: #dde3ea;
+  --color-hormigon-300: #c2cbd6;
+  --color-hormigon-400: #94a1b2;
+  --color-hormigon-500: #6b7a8d;
+  --color-hormigon-600: #4e5c6e;
+  --color-hormigon-700: #3a4655;
+  --color-hormigon-800: #26303c;
+  --color-hormigon-900: #151c24;
+
+  /* --- Tipografía ------------------------------------------------------- */
+  --font-display: 'Archivo Variable', 'Archivo', system-ui, sans-serif;
+  --font-sans: 'Inter Variable', 'Inter', system-ui, sans-serif;
+
+  /* Escala fluida: sin saltos bruscos entre móvil y escritorio */
+  --text-eyebrow: 0.8125rem;
+  --text-eyebrow--line-height: 1.2;
+  --text-eyebrow--letter-spacing: 0.14em;
+  --text-eyebrow--font-weight: 600;
+
+  --text-lead: clamp(1.125rem, 1.05rem + 0.4vw, 1.3125rem);
+  --text-lead--line-height: 1.65;
+
+  /* Declaración: párrafo que tiene que pesar. Entre la bajada y un subtítulo.
+     Uso reservado a la frase que nombra el problema del cliente. */
+  --text-declaracion: clamp(1.3125rem, 1.15rem + 0.8vw, 1.625rem);
+  --text-declaracion--line-height: 1.45;
+
+  --text-h3: clamp(1.1875rem, 1.11rem + 0.4vw, 1.375rem);
+  --text-h3--line-height: 1.35;
+  --text-h2: clamp(1.75rem, 1.35rem + 1.9vw, 2.625rem);
+  --text-h2--line-height: 1.15;
+  --text-h1: clamp(2.125rem, 1.55rem + 2.7vw, 3.375rem);
+  --text-h1--line-height: 1.08;
+  --text-display: clamp(2.5rem, 1.65rem + 3.9vw, 4.25rem);
+  --text-display--line-height: 1.02;
+
+  /* --- Radios ----------------------------------------------------------- */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+
+  /* --- Sombras (tintadas en azul, nunca negro puro) --------------------- */
+  --shadow-suave: 0 1px 2px rgb(12 39 69 / 0.04), 0 2px 8px rgb(12 39 69 / 0.05);
+  --shadow-media: 0 2px 4px rgb(12 39 69 / 0.05), 0 12px 28px -8px rgb(12 39 69 / 0.14);
+  --shadow-alta: 0 4px 8px rgb(12 39 69 / 0.06), 0 24px 48px -12px rgb(12 39 69 / 0.22);
+
+  /* --- Movimiento ------------------------------------------------------- */
+  --ease-marca: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+@layer base {
+  :root {
+    --ancho-contenido: 75rem; /* 1200px */
+    --padding-borde: clamp(1.25rem, 4vw, 2.5rem);
+    color-scheme: light;
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    background-color: var(--color-white);
+    color: var(--color-hormigon-700);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    color: var(--color-azul-900);
+    font-weight: 700;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Foco visible y consistente en toda la marca */
+  :focus-visible {
+    outline: 3px solid var(--color-azul-500);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-azul-500);
+    color: white;
+  }
+
+  img,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* ==========================================================================
+   Componentes
+   ========================================================================== */
+
+@layer components {
+  .contenedor {
+    width: 100%;
+    max-width: var(--ancho-contenido);
+    margin-inline: auto;
+    padding-inline: var(--padding-borde);
+  }
+
+  .seccion {
+    padding-block: clamp(3.5rem, 7vw, 6.5rem);
+  }
+
+  /* --- Botones ---------------------------------------------------------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    padding: 0.875rem 1.75rem;
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    text-align: center;
+    transition:
+      background-color 0.2s var(--ease-marca),
+      color 0.2s var(--ease-marca),
+      border-color 0.2s var(--ease-marca),
+      transform 0.2s var(--ease-marca),
+      box-shadow 0.2s var(--ease-marca);
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  .btn-primario {
+    background-color: var(--color-azul-500);
+    color: white;
+    box-shadow: var(--shadow-media);
+  }
+  .btn-primario:hover {
+    background-color: var(--color-azul-600);
+    box-shadow: var(--shadow-alta);
+  }
+
+  .btn-secundario {
+    background-color: transparent;
+    color: var(--color-azul-900);
+    border: 1.5px solid var(--color-hormigon-300);
+  }
+  .btn-secundario:hover {
+    border-color: var(--color-azul-500);
+    color: var(--color-azul-600);
+    background-color: var(--color-azul-50);
+  }
+
+  .btn-claro {
+    background-color: white;
+    color: var(--color-azul-900);
+  }
+  .btn-claro:hover {
+    background-color: var(--color-azul-50);
+  }
+
+  .btn-fantasma {
+    background-color: transparent;
+    color: white;
+    border: 1.5px solid rgb(255 255 255 / 0.35);
+  }
+  .btn-fantasma:hover {
+    border-color: white;
+    background-color: rgb(255 255 255 / 0.1);
+  }
+
+  /* --- Antetítulo (eyebrow) --------------------------------------------- */
+  .antetitulo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-family: var(--font-display);
+    font-size: var(--text-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-azul-600);
+  }
+  .antetitulo::before {
+    content: '';
+    width: 1.75rem;
+    height: 2px;
+    border-radius: 2px;
+    background-color: var(--color-oxido-500);
+    flex: none;
+  }
+  .antetitulo-claro {
+    color: var(--color-azul-200);
+  }
+
+  /* --- Tarjeta ---------------------------------------------------------- */
+  .tarjeta {
+    background-color: white;
+    border: 1px solid var(--color-hormigon-200);
+    border-radius: var(--radius-lg);
+    transition:
+      border-color 0.25s var(--ease-marca),
+      box-shadow 0.25s var(--ease-marca),
+      transform 0.25s var(--ease-marca);
+  }
+
+  /* --- Prosa (texto largo) ---------------------------------------------- */
+  .prosa > * + * {
+    margin-top: 1.15em;
+  }
+  .prosa h2 {
+    font-size: var(--text-h2);
+    margin-top: 2em;
+  }
+  .prosa h3 {
+    font-size: var(--text-h3);
+    margin-top: 1.75em;
+  }
+  .prosa ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .prosa ul li {
+    position: relative;
+    padding-left: 1.9rem;
+  }
+  .prosa ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 999px;
+    border: 2.5px solid var(--color-azul-500);
+  }
+  .prosa strong {
+    color: var(--color-azul-900);
+    font-weight: 600;
+  }
+  .prosa a {
+    color: var(--color-azul-600);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+/* ==========================================================================
+   Bento de "Por qué nos llaman"
+   Las animaciones arrancan cuando la pieza entra en viewport: el observador
+   le pone `.es-visible` y desde ahí cuelgan todas las reglas.
+   ========================================================================== */
+
+@layer components {
+  .pieza {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    transition:
+      transform 0.4s var(--ease-marca),
+      box-shadow 0.4s var(--ease-marca);
+  }
+
+  .pieza:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-alta);
+  }
+
+  /* Profundidad sobre las piezas oscuras: un halo suave evita el color plano */
+  .pieza-oscura::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      110% 80% at 15% 0%,
+      color-mix(in oklab, var(--color-agua-400) 16%, transparent),
+      transparent 60%
+    );
+    pointer-events: none;
+  }
+
+  /* --- Piezas de dibujo --------------------------------------------------
+     Todas en bucle: la sección tiene que seguir contando algo cuando el
+     visitante llega, no solo durante el primer segundo. Se pausan fuera de
+     pantalla (ver `.en-pantalla`), así no consumen CPU de fondo. */
+
+  /* El agua fluye por el recorrido, sin fin y sin salto: el desplazamiento
+     por ciclo es exactamente un periodo del guion (9 + 8). */
+  .anim-recorrido {
+    animation: fluir 1.5s linear infinite;
+  }
+
+  /* Los bloques en marcha hacen una onda que viaja; los detenidos no se
+     mueven. Ese contraste es el mensaje de la pieza. */
+  .anim-bloque {
+    animation: onda 1.6s ease-in-out infinite;
+    animation-delay: var(--retardo, 0ms);
+  }
+  .anim-bloque-detenido {
+    animation: marcar 2.4s linear infinite;
+  }
+
+  /* La grieta crece, se sostiene y vuelve a empezar */
+  .anim-grieta {
+    transform-origin: 50% 0%;
+    animation: avanzar 6s var(--ease-marca) infinite;
+    animation-delay: var(--retardo, 0ms);
+  }
+
+  .anim-punto {
+    animation: latir 6s ease-in-out infinite;
+    animation-delay: var(--retardo, 0ms);
+  }
+
+  /* La barra de contraparte se barre completa, espera y se repite */
+  .anim-barrido {
+    animation: barrer-ciclo 5s var(--ease-marca) infinite;
+  }
+
+  .anim-surgir {
+    animation: respirar 5s ease-in-out infinite;
+    animation-delay: var(--retardo, 0ms);
+  }
+
+  /* Los bucles se apagan fuera de pantalla para no gastar CPU.
+     La lógica va invertida a propósito: por defecto corren, y solo el
+     observador las pausa. Si el JavaScript falla, el peor caso es que animen
+     de más — nunca que las figuras queden congeladas. */
+  .pieza.fuera-de-vista [class*='anim-'] {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes fluir {
+  to {
+    stroke-dashoffset: -17;
+  }
+}
+@keyframes onda {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+@keyframes marcar {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+@keyframes avanzar {
+  0% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  30%,
+  84% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  96%,
+  100% {
+    transform: scaleY(1);
+    opacity: 0;
+  }
+}
+@keyframes latir {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(0.85);
+  }
+  40%,
+  80% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes barrer-ciclo {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+  28%,
+  88% {
+    clip-path: inset(0 0 0 0);
+  }
+  100% {
+    clip-path: inset(0 100% 0 0);
+  }
+}
+@keyframes respirar {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  45%,
+  75% {
+    opacity: 1;
+  }
+}
+
+/* Sin movimiento: todo queda en su estado final, visible y quieto */
+@media (prefers-reduced-motion: reduce) {
+  .anim-recorrido,
+  .anim-bloque,
+  .anim-bloque-detenido,
+  .anim-grieta,
+  .anim-punto,
+  .anim-barrido,
+  .anim-surgir {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+    stroke-dashoffset: 0;
+    clip-path: none;
+  }
+  .pieza:hover {
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+   Utilidades
+   ========================================================================== */
+
+/* --- Aparición por scroll ---------------------------------------------------
+   El contenido es visible por defecto. Solo se oculta si el navegador tiene
+   JavaScript (clase `js` en <html>), de modo que un fallo del script nunca
+   deja la página en blanco. */
+@layer components {
+  .revelar {
+    transition:
+      opacity 0.7s var(--ease-marca),
+      transform 0.7s var(--ease-marca);
+  }
+
+  html.js .revelar {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+
+  html.js .revelar.es-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html.js .revelar {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}

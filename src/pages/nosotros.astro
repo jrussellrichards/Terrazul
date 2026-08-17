@@ -1,0 +1,177 @@
+---
+import { Image } from 'astro:assets';
+
+import Base from '../layouts/Base.astro';
+import Icono from '../components/Icono.astro';
+import TituloSeccion from '../components/TituloSeccion.astro';
+import LlamadoAccion from '../components/LlamadoAccion.astro';
+import { PROCESO } from '../consts';
+
+import nosotrosImagen from '../assets/general/nosotros.jpg';
+import detalleSellado from '../assets/general/detalle-sellado.jpg';
+import detalleGrouting from '../assets/general/detalle-grouting.jpg';
+
+const principios = [
+  {
+    titulo: 'Decimos que no',
+    texto:
+      'Si el sistema que nos piden no corresponde para esa superficie o esa condición de servicio, lo decimos antes de vender. Es más barato perder una cotización que responder por una falla.',
+  },
+  {
+    titulo: 'La preparación es el trabajo',
+    texto:
+      'El 80 % del resultado se juega antes de aplicar la primera capa: diagnóstico, humedad del sustrato y preparación mecánica de superficie. Ahí no tomamos atajos.',
+  },
+  {
+    titulo: 'Todo queda por escrito',
+    texto:
+      'Alcance, procedimiento, productos, espesores y plazos. Para que sepas exactamente qué se hizo y qué mantención necesita en tres años más.',
+  },
+];
+---
+
+<Base
+  titulo="Nosotros — Terrazul SpA, Talcahuano"
+  descripcion="Terrazul SpA es una empresa de la Región del Biobío formada por profesionales del sector construcción e industrial de la zona sur, especializada en sistemas de protección para estructuras."
+>
+  <!-- Encabezado -->
+  <section class="border-b border-hormigon-200 bg-hormigon-50">
+    <div class="contenedor py-16 lg:py-24">
+      <nav aria-label="Ruta de navegación" class="mb-6 text-sm text-hormigon-500">
+        <a href="/" class="hover:text-azul-600">Inicio</a>
+        <span class="mx-2 text-hormigon-300">/</span>
+        <span class="text-azul-900">Nosotros</span>
+      </nav>
+
+      <div class="max-w-3xl">
+        <p class="antetitulo">Quiénes somos</p>
+        <h1 class="mt-5 text-h1">
+          Una empresa del Biobío para los problemas del Biobío.
+        </h1>
+        <p class="mt-6 text-lead text-hormigon-600">
+          Nacimos para cubrir una necesidad concreta del mercado local: resolver aquí, con
+          criterio técnico y equipo propio, lo que antes obligaba a traer un especialista
+          de otra región.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Relato -->
+  <section class="seccion">
+    <div class="contenedor grid items-start gap-12 lg:grid-cols-12 lg:gap-16">
+      <div class="prosa lg:col-span-7">
+        <p>
+          <strong>Terrazul SpA</strong> es una empresa de la Región del Biobío que nace para
+          satisfacer las necesidades del mercado local en asesoría, venta y aplicación de sistemas
+          de impermeabilización, revestimientos industriales y refuerzos estructurales, en
+          proyectos de construcción, mantención o remodelación de instalaciones industriales,
+          comerciales y residenciales.
+        </p>
+        <p>
+          Nos forma un equipo profesional y humano con experiencia y conocimiento del sector
+          construcción e industrial de la zona sur. Esa cercanía es parte del servicio: conocemos
+          las plantas, sabemos cómo se comportan los materiales con la humedad y las temperaturas
+          de acá, y podemos estar en terreno el mismo día en que nos llaman.
+        </p>
+        <h2>Cómo entendemos el oficio</h2>
+        <p>
+          En este rubro es fácil vender un balde de producto y desaparecer. Nosotros trabajamos al
+          revés: primero entender por qué está fallando la estructura y recién después decidir con
+          qué sistema se resuelve. Un material excelente mal especificado falla igual, y la cuenta
+          la termina pagando el cliente dos años después.
+        </p>
+        <p>
+          Como empresa enfocada en la búsqueda permanente de la excelencia en cada servicio
+          prestado, preferimos una conversación técnica antes que un catálogo. Escríbenos, cuéntanos
+          qué está pasando, y si corresponde vamos a verlo.
+        </p>
+      </div>
+
+      <div class="grid gap-4 lg:col-span-5">
+        <Image
+          src={nosotrosImagen}
+          alt="Faena de Terrazul en una obra industrial"
+          widths={[500, 800]}
+          sizes="(min-width: 1024px) 40vw, 90vw"
+          class="aspect-[4/3] w-full rounded-xl object-cover shadow-suave"
+          loading="lazy"
+        />
+        <div class="grid grid-cols-2 gap-4">
+          <Image
+            src={detalleSellado}
+            alt="Detalle de sellado de junta terminado"
+            widths={[300, 500]}
+            sizes="20vw"
+            class="aspect-square w-full rounded-lg object-cover"
+            loading="lazy"
+          />
+          <Image
+            src={detalleGrouting}
+            alt="Detalle de base de equipo con grouting de nivelación"
+            widths={[300, 500]}
+            sizes="20vw"
+            class="aspect-square w-full rounded-lg object-cover"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Principios -->
+  <section class="seccion bg-azul-950">
+    <div class="contenedor">
+      <TituloSeccion
+        antetitulo="En qué creemos"
+        titulo="Tres cosas que no negociamos."
+        claro
+      />
+      <ul class="mt-12 grid gap-6 md:grid-cols-3">
+        {
+          principios.map((p, i) => (
+            <li class="revelar border-t-2 border-white/15 pt-6">
+              <span class="font-display text-sm font-semibold tracking-[0.14em] text-oxido-500 uppercase">
+                0{i + 1}
+              </span>
+              <h3 class="mt-3 text-h3 !text-white">{p.titulo}</h3>
+              <p class="mt-3 text-[0.9375rem] leading-relaxed text-hormigon-400">{p.texto}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Método -->
+  <section class="seccion">
+    <div class="contenedor">
+      <TituloSeccion antetitulo="Nuestro método" titulo="De la visita a la entrega" centrado />
+      <ol class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {
+          PROCESO.map((paso) => (
+            <li class="tarjeta revelar p-6">
+              <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-azul-500 font-display text-sm font-bold text-white">
+                {paso.numero}
+              </span>
+              <h3 class="mt-4 text-[1.0625rem] font-semibold">{paso.titulo}</h3>
+              <p class="mt-2 text-[0.9375rem] leading-relaxed text-hormigon-600">{paso.texto}</p>
+            </li>
+          ))
+        }
+      </ol>
+
+      <div class="revelar mt-12 text-center">
+        <a href="/servicios" class="btn btn-secundario">
+          Ver las seis líneas de servicio
+          <Icono nombre="flecha" tamano={18} />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <LlamadoAccion
+    titulo="Conversemos sin compromiso."
+    texto="Como empresa enfocada en la excelencia, preferimos partir escuchando. Cuéntanos tu requerimiento por el canal que te acomode y, si tiene sentido, coordinamos un encuentro para revisarlo en detalle."
+  />
+</Base>

@@ -1,0 +1,64 @@
+# =============================================================================
+# Terrazul — configuración de servidor (Apache / hosting compartido)
+# Se copia tal cual a dist/ durante el build.
+# =============================================================================
+
+# --- Página 404 propia -------------------------------------------------------
+ErrorDocument 404 /404.html
+
+# --- Forzar HTTPS y dominio con www o sin www (elegir una sola versión) ------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # HTTPS obligatorio
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+  # Canonicalizar a la versión sin www
+  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+  RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+</IfModule>
+
+# --- Compresión --------------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE image/svg+xml application/xml
+</IfModule>
+
+# --- Caché -------------------------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+
+  # Los assets con hash en el nombre pueden cachearse indefinidamente
+  <FilesMatch "\.(woff2|woff|ttf|webp|avif|jpg|jpeg|png|gif|svg|ico)$">
+    ExpiresDefault "access plus 1 year"
+    Header set Cache-Control "public, immutable"
+  </FilesMatch>
+
+  <FilesMatch "\.(css|js)$">
+    ExpiresDefault "access plus 1 year"
+    Header set Cache-Control "public, immutable"
+  </FilesMatch>
+
+  # El HTML se revalida siempre, para que los cambios se vean al publicar
+  <FilesMatch "\.html$">
+    ExpiresDefault "access plus 0 seconds"
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# --- Cabeceras de seguridad --------------------------------------------------
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# --- Tipos MIME --------------------------------------------------------------
+<IfModule mod_mime.c>
+  AddType image/webp .webp
+  AddType image/avif .avif
+  AddType font/woff2 .woff2
+</IfModule>

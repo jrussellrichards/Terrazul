@@ -1,0 +1,317 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+
+import Base from '../layouts/Base.astro';
+import Icono from '../components/Icono.astro';
+import TituloSeccion from '../components/TituloSeccion.astro';
+import TarjetaServicio from '../components/TarjetaServicio.astro';
+import TablaComparativa from '../components/TablaComparativa.astro';
+import Figura from '../components/Figura.astro';
+import LlamadoAccion from '../components/LlamadoAccion.astro';
+import Preguntas from '../components/Preguntas.astro';
+
+import { SITIO, SECTORES, PROCESO, PIEZAS_PROBLEMA, VENTAJAS_HERO, whatsappUrl } from '../consts';
+import heroImagen from '../assets/general/hero.jpg';
+import nosotrosImagen from '../assets/general/nosotros.jpg';
+
+const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden - b.data.orden);
+---
+
+<Base
+  titulo={SITIO.titulo}
+  descripcion={SITIO.descripcion}
+  heroOscuro
+>
+  <!-- ===================== HERO ===================== -->
+  <section class="relative isolate flex min-h-[92svh] items-center overflow-hidden bg-azul-950">
+    <Image
+      src={heroImagen}
+      alt=""
+      widths={[800, 1280, 1920]}
+      sizes="100vw"
+      class="absolute inset-0 -z-20 h-full w-full object-cover"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <div
+      class="absolute inset-0 -z-10 bg-gradient-to-br from-azul-950/95 via-azul-950/80 to-azul-900/60"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div class="contenedor pt-32 pb-20 lg:pt-36 lg:pb-28">
+      <div class="max-w-3xl">
+        <p class="antetitulo antetitulo-claro">
+          Talcahuano · Biobío<span class="hidden sm:inline"> — en terreno el mismo día</span>
+        </p>
+
+        <h1 class="mt-6 text-display !text-white">
+          Protegemos las instalaciones<br class="hidden sm:block" /> que sostienen tu operación.
+        </h1>
+
+        <p class="mt-7 max-w-2xl text-lead text-azul-100">
+          Impermeabilización, pisos industriales y refuerzo estructural para plantas y
+          edificios del sur de Chile.
+        </p>
+
+        <ul class="mt-7 flex flex-wrap gap-2.5">
+          {
+            VENTAJAS_HERO.map((ventaja) => (
+              <li class="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-xs font-medium text-azul-100 backdrop-blur-sm sm:gap-2 sm:px-4 sm:py-2 sm:text-sm">
+                <Icono nombre="check" tamano={15} class="flex-none text-azul-300" />
+                {ventaja}
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+          <a href="/contacto" class="btn btn-primario">
+            Solicitar visita técnica
+            <Icono nombre="flecha" tamano={18} />
+          </a>
+          <a href="#servicios" class="btn btn-fantasma">Ver servicios</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Franja de rubros -->
+    <div class="absolute inset-x-0 bottom-0 border-t border-white/10 bg-azul-950/60 backdrop-blur">
+      <div class="contenedor flex items-center gap-x-8 gap-y-2 overflow-x-auto py-4">
+        <span
+          class="flex-none font-display text-[0.6875rem] font-semibold tracking-[0.16em] text-azul-300 uppercase"
+        >
+          Rubros que atendemos
+        </span>
+        <ul class="flex flex-none items-center gap-6 text-sm text-hormigon-300">
+          {
+            ['Celulosa y papel', 'Alimentaria', 'Vitivinícola', 'Pesquera', 'Lechera', 'Retail', 'Construcción'].map(
+              (r) => <li class="whitespace-nowrap">{r}</li>,
+            )
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PROBLEMA / PROPUESTA ===================== -->
+  <section class="seccion">
+    <div class="contenedor">
+      <!-- Cabecera centrada a dos tonos: la segunda línea va en el color de marca -->
+      <div class="revelar mx-auto max-w-2xl text-center">
+        <p class="antetitulo justify-center">Por qué nos llaman</p>
+        <h2 class="mt-5 text-h2">Una filtración nunca es</h2>
+        <p class="text-h2 font-bold tracking-[-0.022em] text-azul-500">solo una filtración.</p>
+        <p class="mx-auto mt-5 max-w-xl text-lead text-hormigon-600">
+          Cuando llega a ser evidente, arreglarlo cuesta varias veces lo que habría costado
+          prevenirlo.
+        </p>
+      </div>
+
+      <!--
+        Bento. Cada pieza: fondo sólido, cabecera flotando arriba y el gráfico
+        anclado al borde inferior, a sangre y recortado por el radio.
+      -->
+      <div class="mt-12 grid gap-3 sm:grid-cols-3">
+        {
+          PIEZAS_PROBLEMA.map((pieza) => (
+            <article
+              class:list={[
+                'revelar pieza',
+                pieza.tono === 'oscuro' && 'pieza-oscura',
+                pieza.ancho === 'completo'
+                  ? 'h-[230px] sm:col-span-3 sm:h-[260px]'
+                  : 'h-[250px] sm:h-[340px]',
+                pieza.fondo,
+              ]}
+            >
+              <div class="absolute inset-x-0 top-0 z-10 p-6">
+                <p
+                  class:list={[
+                    'font-display text-[1.0625rem] leading-snug font-bold',
+                    pieza.tono === 'claro' ? 'text-azul-900' : 'text-white',
+                  ]}
+                >
+                  {pieza.titulo}
+                </p>
+                <p
+                  class:list={[
+                    'mt-0.5 text-[11px] font-medium tracking-wide',
+                    pieza.tono === 'claro' ? 'text-hormigon-600' : 'text-white/70',
+                  ]}
+                >
+                  {pieza.categoria}
+                </p>
+              </div>
+              <div class="absolute inset-x-0 -bottom-3 h-[78%]">
+                <Figura nombre={pieza.figura} class="h-full w-full" />
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      <!-- La prueba -->
+      <div class="mt-14 border-t border-hormigon-200 pt-10">
+        <h3 class="revelar mb-8 text-h3">Quién cubre qué, en detalle.</h3>
+        <TablaComparativa />
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SERVICIOS ===================== -->
+  <section id="servicios" class="seccion bg-hormigon-50 scroll-mt-24">
+    <div class="contenedor">
+      <TituloSeccion
+        antetitulo="Qué hacemos"
+        titulo="Seis líneas de servicio, un mismo criterio técnico."
+        bajada="Cada una cubre las tres etapas: especificación del sistema, suministro de los materiales e instalación con equipo propio."
+      />
+
+      <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {servicios.map((servicio) => <TarjetaServicio servicio={servicio} />)}
+      </div>
+
+      <!-- Séptima línea: distribución -->
+      <div
+        class="tarjeta revelar mt-6 flex flex-col items-start justify-between gap-6 border-azul-200 bg-azul-50 p-8 sm:flex-row sm:items-center"
+      >
+        <div class="max-w-2xl">
+          <h3 class="text-h3">¿Solo necesitas el producto?</h3>
+          <p class="mt-2 text-[0.9375rem] leading-relaxed text-hormigon-600">
+            También distribuimos y comercializamos soluciones de marcas reconocidas para la
+            industria y la construcción, con la asesoría técnica para que elijas el sistema
+            correcto y no el que estaba en góndola.
+          </p>
+        </div>
+        <a href="/contacto" class="btn btn-secundario flex-none bg-white">
+          Consultar disponibilidad
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PROCESO ===================== -->
+  <section id="proceso" class="seccion scroll-mt-24">
+    <div class="contenedor">
+      <TituloSeccion
+        antetitulo="Cómo trabajamos"
+        titulo="Primero el diagnóstico. Después el producto."
+        bajada="El mismo método en una terraza de 40 m² y en una planta completa. Cambia la escala, no el criterio."
+      />
+
+      <ol class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {
+          PROCESO.map((paso) => (
+            <li class="revelar relative border-t-2 border-hormigon-200 pt-6 transition-colors hover:border-azul-500">
+              <span class="font-display text-4xl font-bold text-azul-100">{paso.numero}</span>
+              <h3 class="mt-3 text-[1.0625rem] font-semibold">{paso.titulo}</h3>
+              <p class="mt-2 text-[0.9375rem] leading-relaxed text-hormigon-600">{paso.texto}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- ===================== SECTORES ===================== -->
+  <section id="sectores" class="seccion bg-azul-950 scroll-mt-24">
+    <div class="contenedor">
+      <TituloSeccion
+        antetitulo="Dónde prestamos servicios"
+        titulo="Cada rubro industrial requiere soluciones distintas."
+        bajada="Una sala de vinificación, una planta de celulosa y una lechería exigen sistemas diferentes. Estos son los rubros donde tenemos experiencia acumulada."
+        claro
+      />
+
+      <ul class="mt-12 grid gap-px overflow-hidden rounded-xl bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          SECTORES.map((sector) => (
+            <li class="revelar bg-azul-950 p-6 transition-colors hover:bg-azul-900">
+              <h3 class="text-[1.0625rem] font-semibold !text-white">{sector.nombre}</h3>
+              <p class="mt-2 text-sm leading-relaxed text-hormigon-400">{sector.detalle}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== NOSOTROS (extracto) ===================== -->
+  <section class="seccion">
+    <div class="contenedor grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+      <div class="revelar relative">
+        <Image
+          src={nosotrosImagen}
+          alt="Equipo de Terrazul trabajando en faena"
+          widths={[600, 900, 1200]}
+          sizes="(min-width: 1024px) 45vw, 90vw"
+          class="aspect-[4/3] w-full rounded-xl object-cover shadow-media"
+          loading="lazy"
+        />
+        <div
+          class="absolute -right-3 -bottom-6 hidden rounded-xl bg-azul-500 px-7 py-6 text-white shadow-alta sm:block lg:-right-6"
+        >
+          <p class="font-display text-3xl font-bold">3 en 1</p>
+          <p class="mt-1 max-w-[10rem] text-sm leading-snug text-azul-100">
+            Especificación, suministro e instalación
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <TituloSeccion
+          antetitulo="Quiénes somos"
+          titulo="Un equipo del sur, para los problemas del sur."
+        />
+        <div class="revelar mt-6 grid gap-4 text-hormigon-600">
+          <p>
+            Terrazul SpA nació en la Región del Biobío para cubrir una necesidad concreta del
+            mercado local: asesoría, venta y aplicación de sistemas de impermeabilización,
+            revestimientos industriales y refuerzos estructurales, sin tener que traer a un
+            especialista de Santiago cada vez.
+          </p>
+          <p>
+            Nos forma un equipo profesional con experiencia y conocimiento del sector construcción
+            e industrial de la zona sur. Eso significa saber cómo se comporta un sistema con
+            esta humedad, este clima y estos plazos.
+          </p>
+        </div>
+        <div class="revelar mt-8 flex flex-wrap gap-3">
+          <a href="/nosotros" class="btn btn-secundario">
+            Conocer más sobre Terrazul
+            <Icono nombre="flecha" tamano={18} />
+          </a>
+          <a
+            href={whatsappUrl()}
+            target="_blank"
+            rel="noopener"
+            class="btn btn-secundario"
+          >
+            <Icono nombre="whatsapp" tamano={18} />
+            Hablar con nosotros
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PREGUNTAS ===================== -->
+  <section class="seccion bg-hormigon-50">
+    <div class="contenedor grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-4">
+        <TituloSeccion
+          antetitulo="Antes de escribirnos"
+          titulo="Preguntas frecuentes"
+          bajada="Lo que más nos consultan al momento de cotizar."
+        />
+      </div>
+      <div class="lg:col-span-8">
+        <Preguntas />
+      </div>
+    </div>
+  </section>
+
+  <LlamadoAccion />
+</Base>

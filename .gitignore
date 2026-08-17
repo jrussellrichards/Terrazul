@@ -1,0 +1,24 @@
+# build
+dist/
+.astro/
+
+# deps
+node_modules/
+
+# entorno
+.env
+.env.production
+
+# sistema / editores
+.DS_Store
+Thumbs.db
+.vs/
+.vscode/
+*.log
+npm-debug.log*
+
+# utilidades temporales
+_render.mjs
+
+.vercel
+.env*

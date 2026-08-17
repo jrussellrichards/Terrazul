@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+import Icono from '../components/Icono.astro';
+import { EMPRESA, whatsappUrl } from '../consts';
+---
+
+<Base
+  titulo="Mensaje enviado"
+  descripcion="Recibimos tu solicitud. El equipo de Terrazul te contactará a la brevedad."
+  noIndex
+>
+  <section class="seccion">
+    <div class="contenedor flex min-h-[55vh] max-w-2xl flex-col items-center justify-center text-center">
+      <span class="flex h-16 w-16 items-center justify-center rounded-2xl bg-azul-50 text-azul-600">
+        <Icono nombre="check" tamano={32} />
+      </span>
+
+      <h1 class="mt-8 text-h1">Recibimos tu mensaje.</h1>
+      <p class="mt-5 text-lead text-hormigon-600">
+        Gracias por escribirnos. Revisamos tu solicitud y te respondemos en horario hábil
+        ({EMPRESA.horario}). Si es urgente, escríbenos directo por WhatsApp.
+      </p>
+
+      <div class="mt-10 flex flex-col gap-3 sm:flex-row">
+        <a href={whatsappUrl()} target="_blank" rel="noopener" class="btn btn-primario">
+          <Icono nombre="whatsapp" tamano={18} />
+          Escribir por WhatsApp
+        </a>
+        <a href="/" class="btn btn-secundario">Volver al inicio</a>
+      </div>
+    </div>
+  </section>
+</Base>

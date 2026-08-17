@@ -1,0 +1,150 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+
+import Base from '../../layouts/Base.astro';
+import Icono from '../../components/Icono.astro';
+import LlamadoAccion from '../../components/LlamadoAccion.astro';
+import { whatsappUrl } from '../../consts';
+
+export async function getStaticPaths() {
+  const servicios = await getCollection('servicios');
+  return servicios.map((servicio) => ({
+    params: { slug: servicio.id },
+    props: { servicio },
+  }));
+}
+
+interface Props {
+  servicio: CollectionEntry<'servicios'>;
+}
+
+const { servicio } = Astro.props;
+const { titulo, tituloLargo, resumen, descripcionSeo, imagen, imagenAlt, prestaciones, sintomas } =
+  servicio.data;
+const { Content } = await render(servicio);
+
+const otros = (await getCollection('servicios'))
+  .filter((s) => s.id !== servicio.id)
+  .sort((a, b) => a.data.orden - b.data.orden)
+  .slice(0, 3);
+---
+
+<Base titulo={tituloLargo} descripcion={descripcionSeo} tipo="article">
+  <!-- Encabezado -->
+  <section class="border-b border-hormigon-200 bg-hormigon-50">
+    <div class="contenedor py-16 lg:py-20">
+      <nav aria-label="Ruta de navegación" class="mb-6 text-sm text-hormigon-500">
+        <a href="/" class="hover:text-azul-600">Inicio</a>
+        <span class="mx-2 text-hormigon-300">/</span>
+        <a href="/servicios" class="hover:text-azul-600">Servicios</a>
+        <span class="mx-2 text-hormigon-300">/</span>
+        <span class="text-azul-900">{titulo}</span>
+      </nav>
+
+      <div class="max-w-3xl">
+        <h1 class="text-h1">{tituloLargo}</h1>
+        <p class="mt-6 text-lead text-hormigon-600">{resumen}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Imagen destacada -->
+  <div class="contenedor -mt-px">
+    <Image
+      src={imagen}
+      alt={imagenAlt}
+      widths={[800, 1280, 1600]}
+      sizes="(min-width: 1280px) 1200px, 95vw"
+      class="aspect-[16/9] w-full rounded-b-xl object-cover shadow-media"
+      loading="eager"
+    />
+  </div>
+
+  <!-- Cuerpo -->
+  <section class="seccion">
+    <div class="contenedor grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <div class="prosa lg:col-span-7">
+        <Content />
+      </div>
+
+      <aside class="grid content-start gap-6 lg:col-span-5">
+        <div class="tarjeta p-7">
+          <h2 class="font-display text-lg font-bold text-azul-900">Qué incluye</h2>
+          <ul class="mt-5 grid gap-3.5">
+            {
+              prestaciones.map((p) => (
+                <li class="flex gap-3 text-[0.9375rem] leading-relaxed text-hormigon-600">
+                  <Icono nombre="check" tamano={20} class="mt-0.5 flex-none text-azul-500" />
+                  {p}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="rounded-lg border border-oxido-200 bg-oxido-50 p-7">
+          <h2 class="font-display text-lg font-bold text-azul-900">Señales de que lo necesitas</h2>
+          <ul class="mt-5 grid gap-3.5">
+            {
+              sintomas.map((s) => (
+                <li class="flex gap-3 text-[0.9375rem] leading-relaxed text-hormigon-700">
+                  <span
+                    class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-oxido-500"
+                    aria-hidden="true"
+                  />
+                  {s}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="rounded-lg bg-azul-900 p-7 text-azul-100">
+          <h2 class="font-display text-lg font-bold text-white">¿Te suena conocido?</h2>
+          <p class="mt-3 text-[0.9375rem] leading-relaxed">
+            Mándanos una foto por WhatsApp. Con eso solemos tener suficiente para decirte si
+            corresponde una visita técnica y qué orden de magnitud tiene el trabajo.
+          </p>
+          <a
+            href={whatsappUrl(`Hola, necesito asesoría sobre: ${titulo}.`)}
+            target="_blank"
+            rel="noopener"
+            class="btn btn-claro mt-6 w-full"
+          >
+            <Icono nombre="whatsapp" tamano={18} />
+            Enviar una foto
+          </a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Otros servicios -->
+  <section class="seccion bg-hormigon-50">
+    <div class="contenedor">
+      <h2 class="revelar text-h2">Otros servicios</h2>
+      <ul class="mt-10 grid gap-6 sm:grid-cols-3">
+        {
+          otros.map((s) => (
+            <li class="tarjeta revelar group relative p-6 transition hover:-translate-y-1 hover:border-azul-200 hover:shadow-media">
+              <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-azul-50 text-azul-600">
+                <Icono nombre={s.data.icono} tamano={22} />
+              </span>
+              <h3 class="mt-5 text-[1.0625rem] font-semibold">
+                <a href={`/servicios/${s.id}`} class="after:absolute after:inset-0">
+                  {s.data.titulo}
+                </a>
+              </h3>
+              <p class="mt-2 text-[0.9375rem] leading-relaxed text-hormigon-600">
+                {s.data.resumen}
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <LlamadoAccion />
+</Base>

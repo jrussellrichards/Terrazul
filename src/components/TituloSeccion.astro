@@ -1,0 +1,50 @@
+---
+interface Props {
+  antetitulo?: string;
+  titulo: string;
+  bajada?: string;
+  centrado?: boolean;
+  claro?: boolean;
+  class?: string;
+}
+
+const {
+  antetitulo,
+  titulo,
+  bajada,
+  centrado = false,
+  claro = false,
+  class: clase = '',
+} = Astro.props;
+---
+
+<div
+  class:list={[
+    'revelar max-w-2xl',
+    centrado && 'mx-auto text-center',
+    clase,
+  ]}
+>
+  {
+    antetitulo && (
+      <p class:list={['antetitulo', claro && 'antetitulo-claro', centrado && 'justify-center']}>
+        {antetitulo}
+      </p>
+    )
+  }
+  <h2
+    class:list={[
+      'mt-4 text-h2',
+      claro && '!text-white',
+    ]}
+  >
+    {titulo}
+  </h2>
+  {
+    bajada && (
+      <p class:list={['mt-5 text-lead', claro ? 'text-azul-100' : 'text-hormigon-600']}>
+        {bajada}
+      </p>
+    )
+  }
+</div>

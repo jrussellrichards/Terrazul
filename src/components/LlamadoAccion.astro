@@ -1,0 +1,56 @@
+---
+import Icono from './Icono.astro';
+import { EMPRESA, whatsappUrl } from '../consts';
+
+interface Props {
+  titulo?: string;
+  texto?: string;
+}
+
+const {
+  titulo = '¿Tienes una filtración, un piso vencido o una estructura que no da el ancho?',
+  texto = 'Cuéntanos qué está pasando. Coordinamos una visita técnica, revisamos en terreno y te entregamos una propuesta escrita con alcance, plazo y precio.',
+} = Astro.props;
+---
+
+<section class="relative overflow-hidden bg-azul-900">
+  <!-- Trama geométrica derivada del arco del isotipo -->
+  <div
+    class="pointer-events-none absolute -top-24 -right-16 h-[26rem] w-[26rem] opacity-[0.07]"
+    aria-hidden="true"
+  >
+    <svg viewBox="0 0 48 48" fill="none" class="h-full w-full">
+      <path d="M10 41V22a14 14 0 0 1 28 0v19" stroke="#fff" stroke-width="2"></path>
+      <path d="M2 41V22a22 22 0 0 1 44 0v19" stroke="#fff" stroke-width="1.5"></path>
+      <path d="M18 41V22a6 6 0 0 1 12 0v19" stroke="#fff" stroke-width="1.5"></path>
+    </svg>
+  </div>
+
+  <div class="contenedor relative seccion">
+    <div class="revelar mx-auto max-w-3xl text-center">
+      <h2 class="text-h2 !text-white">{titulo}</h2>
+      <p class="mx-auto mt-5 max-w-2xl text-lead text-azul-100">{texto}</p>
+
+      <div class="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+        <a href={whatsappUrl()} target="_blank" rel="noopener" class="btn btn-claro">
+          <Icono nombre="whatsapp" tamano={18} />
+          Escribir por WhatsApp
+        </a>
+        <a href="/contacto" class="btn btn-fantasma">
+          Solicitar visita técnica
+          <Icono nombre="flecha" tamano={18} />
+        </a>
+      </div>
+
+      <p class="mt-6 text-sm text-azul-200">
+        O llámanos directo al
+        <a
+          href={`tel:${EMPRESA.telefonoE164}`}
+          class="font-semibold text-white underline underline-offset-4"
+        >
+          {EMPRESA.telefono}
+        </a>
+      </p>
+    </div>
+  </div>
+</section>

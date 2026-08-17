@@ -1,0 +1,177 @@
+---
+/**
+ * Figuras de las piezas del bento.
+ *
+ * Van ancladas al borde inferior de su pieza, a sangre y recortadas por el radio
+ * de la tarjeta: `preserveAspectRatio="xMidYMax slice"` las hace comportarse como
+ * una foto con `object-cover`. Por eso las composiciones están dibujadas para
+ * salirse por los costados: se ven como una escena asomada, no como un diagrama
+ * dentro de una caja.
+ *
+ * Las animaciones se declaran en global.css y arrancan cuando la pieza recibe
+ * `.es-visible`. El escalonado viaja por la variable `--retardo`.
+ *
+ * Los cálculos van en el frontmatter: un `<` dentro de una expresión del template
+ * lo interpreta el compilador de Astro como apertura de etiqueta.
+ */
+interface Props {
+  nombre: 'recorrido' | 'parada' | 'inviernos' | 'contraparte';
+  class?: string;
+}
+
+const { nombre, class: clase = '' } = Astro.props as Props;
+
+/**
+ * `slice` recorta para cubrir. `meet` encaja completo, y es obligatorio en la
+ * figura de contraparte: su argumento son dos filas comparadas y el recorte se
+ * comía la de arriba.
+ */
+const comun = {
+  class: clase,
+  preserveAspectRatio: nombre === 'contraparte' ? 'xMidYMid meet' : 'xMidYMax slice',
+  fill: 'none',
+  role: 'img',
+} as const;
+
+/** Bloques de la línea de producción; el tramo detenido va hueco. */
+const bloquesLinea = Array.from({ length: 22 }, (_, i) => {
+  const detenido = i >= 8 && i <= 12;
+  return { x: -20 + i * 30, detenido, retardo: i * 70 };
+});
+
+/** Tres inviernos: la grieta avanza, la armadura adelgaza, aparece el óxido. */
+const inviernos = [0, 1, 2].map((i) => {
+  const x = 14 + i * 130;
+  return {
+    x,
+    etiqueta: `Invierno ${i + 1}`,
+    grieta: 26 + i * 42,
+    armadura: 82 - i * 22,
+    grosor: 6 - i * 1.5,
+    retardo: i * 500,
+    oxido: Array.from({ length: i * 4 }, (_, p) => ({
+      cx: x + 24 + p * 16,
+      cy: 96 + (p % 2) * 9,
+      retardo: i * 500 + 400 + p * 120,
+    })),
+  };
+});
+---
+
+{
+  /* Corte de la estructura: el agua entra por la falla y sale lejos */
+  nombre === 'recorrido' && (
+    <svg viewBox="0 0 400 240" {...comun} aria-label="Corte de la estructura: el agua entra por una falla de la membrana y aparece varios metros más allá">
+      <rect x="-20" y="34" width="440" height="26" fill="#ffffff" fill-opacity="0.1" />
+      <rect x="-20" y="66" width="152" height="12" rx="6" fill="var(--color-agua-400)" fill-opacity="0.85" />
+      <rect x="168" y="66" width="272" height="12" rx="6" fill="var(--color-agua-400)" fill-opacity="0.85" />
+      <rect x="-20" y="86" width="440" height="180" fill="#ffffff" fill-opacity="0.05" />
+      <path d="M-10 132h420M-10 186h420" stroke="#ffffff" stroke-opacity="0.14" stroke-width="4" stroke-linecap="round" />
+      <path
+        class="anim-recorrido"
+        d="M150 4v62c0 40-4 52 22 78 34 34 92 46 140 62 30 10 52 18 66 30"
+        stroke="var(--color-agua-300)"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-dasharray="9 8"
+      />
+      <circle class="anim-punto" style="--retardo:0ms" cx="150" cy="72" r="10" fill="#D9622B" />
+      <g class="anim-surgir" style="--retardo:800ms">
+        <ellipse cx="330" cy="222" rx="62" ry="16" fill="#D9622B" fill-opacity="0.35" />
+        <ellipse cx="330" cy="222" rx="32" ry="8" fill="#D9622B" fill-opacity="0.7" />
+      </g>
+    </svg>
+  )
+}
+
+{
+  /* La línea de producción con un tramo detenido */
+  nombre === 'parada' && (
+    <svg viewBox="0 0 400 240" {...comun} aria-label="Una línea de producción con un tramo detenido">
+      {bloquesLinea.map((b) => (
+        <rect
+          class={b.detenido ? 'anim-bloque-detenido' : 'anim-bloque'}
+          style={`--retardo:${b.retardo}ms`}
+          x={b.x}
+          y={b.detenido ? 132 : 74}
+          width="20"
+          height={b.detenido ? 60 : 118}
+          rx="5"
+          fill={b.detenido ? 'none' : '#ffffff'}
+          fill-opacity={b.detenido ? undefined : 0.92}
+          stroke={b.detenido ? '#04131F' : 'none'}
+          stroke-opacity={b.detenido ? 0.4 : undefined}
+          stroke-width="2.5"
+          stroke-dasharray={b.detenido ? '5 5' : undefined}
+        />
+      ))}
+      <path
+        class="anim-surgir"
+        style="--retardo:1600ms"
+        d="M222 214h150M222 206v16M372 206v16"
+        stroke="#04131F"
+        stroke-opacity="0.55"
+        stroke-width="2.5"
+        stroke-linecap="round"
+      />
+    </svg>
+  )
+}
+
+{
+  /* Tres inviernos de daño acumulado */
+  nombre === 'inviernos' && (
+    <svg viewBox="0 0 400 240" {...comun} aria-label="Progresión del daño estructural a lo largo de tres inviernos">
+      {inviernos.map((inv) => (
+        <g>
+          <rect x={inv.x} y="18" width="112" height="150" rx="8" fill="#0A2038" fill-opacity="0.07" />
+          <path d={`M${inv.x + 16} 96h${inv.armadura}`} stroke="#6B7A8D" stroke-width={inv.grosor} stroke-linecap="round" />
+          <path
+            class="anim-grieta"
+            style={`--retardo:${inv.retardo}ms`}
+            d={`M${inv.x + 56} 18v${inv.grieta}`}
+            stroke="#D9622B"
+            stroke-width="3.5"
+            stroke-linecap="round"
+          />
+          {inv.oxido.map((o) => (
+            <circle class="anim-punto" style={`--retardo:${o.retardo}ms`} cx={o.cx} cy={o.cy} r="3.5" fill="#D9622B" fill-opacity="0.6" />
+          ))}
+          <text x={inv.x + 56} y="194" text-anchor="middle" font-size="13" font-weight="600" fill="#0A2038" fill-opacity="0.75">
+            {inv.etiqueta}
+          </text>
+        </g>
+      ))}
+    </svg>
+  )
+}
+
+{
+  /* Tres proveedores dejan vacíos; una sola contraparte no */
+  nombre === 'contraparte' && (
+    <svg viewBox="0 0 900 250" {...comun} aria-label="Tres proveedores dejan vacíos sin responsable; una sola contraparte cubre todo el tramo">
+      <text x="20" y="26" font-size="17" font-weight="600" fill="#ffffff" fill-opacity="0.5">
+        Distribuidor · Contratista · Proyectista
+      </text>
+      <rect class="anim-surgir" style="--retardo:0ms" x="20" y="46" width="256" height="34" rx="17" fill="#ffffff" fill-opacity="0.22" />
+      <rect class="anim-surgir" style="--retardo:300ms" x="322" y="46" width="256" height="34" rx="17" fill="#ffffff" fill-opacity="0.22" />
+      <rect class="anim-surgir" style="--retardo:900ms" x="624" y="46" width="256" height="34" rx="17" fill="#ffffff" fill-opacity="0.22" />
+      <g class="anim-punto" style="--retardo:600ms">
+        <path d="M288 52l22 22M310 52l-22 22" stroke="#D9622B" stroke-width="4" stroke-linecap="round" />
+        <text x="299" y="112" text-anchor="middle" font-size="16" font-weight="600" fill="#D9622B">sin dueño</text>
+      </g>
+      <g class="anim-punto" style="--retardo:1200ms">
+        <path d="M590 52l22 22M612 52l-22 22" stroke="#D9622B" stroke-width="4" stroke-linecap="round" />
+        <text x="601" y="112" text-anchor="middle" font-size="16" font-weight="600" fill="#D9622B">sin dueño</text>
+      </g>
+
+      <text x="20" y="168" font-size="17" font-weight="600" fill="var(--color-agua-400)">Terrazul</text>
+      <g class="anim-barrido">
+        <rect x="20" y="188" width="860" height="42" rx="21" fill="#ffffff" />
+        <text x="450" y="215" text-anchor="middle" font-size="18" font-weight="700" fill="#0A2038">
+          una sola contraparte, de la especificación a la entrega
+        </text>
+      </g>
+    </svg>
+  )
+}

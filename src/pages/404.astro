@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import Icono from '../components/Icono.astro';
+---
+
+<Base
+  titulo="Página no encontrada"
+  descripcion="La página que buscas no existe o cambió de dirección."
+  noIndex
+>
+  <section class="seccion">
+    <div class="contenedor flex min-h-[55vh] max-w-2xl flex-col items-center justify-center text-center">
+      <p class="font-display text-7xl font-bold text-azul-100">404</p>
+
+      <h1 class="mt-4 text-h1">Esta página no existe.</h1>
+      <p class="mt-5 text-lead text-hormigon-600">
+        Puede que hayamos movido el contenido al renovar el sitio. Prueba desde los servicios
+        o escríbenos y te orientamos.
+      </p>
+
+      <div class="mt-10 flex flex-col gap-3 sm:flex-row">
+        <a href="/servicios" class="btn btn-primario">
+          Ver servicios
+          <Icono nombre="flecha" tamano={18} />
+        </a>
+        <a href="/" class="btn btn-secundario">Ir al inicio</a>
+      </div>
+    </div>
+  </section>
+</Base>

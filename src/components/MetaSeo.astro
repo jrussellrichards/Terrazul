@@ -1,0 +1,94 @@
+---
+import { EMPRESA, SITIO } from '../consts';
+
+interface Props {
+  titulo: string;
+  descripcion: string;
+  imagen?: string;
+  tipo?: 'website' | 'article';
+  noIndex?: boolean;
+}
+
+const {
+  titulo,
+  descripcion,
+  imagen = '/og-terrazul.png',
+  tipo = 'website',
+  noIndex = false,
+} = Astro.props;
+
+const canonica = new URL(Astro.url.pathname.replace(/\.html$/, ''), Astro.site);
+const imagenAbsoluta = new URL(imagen, Astro.site);
+const tituloCompleto = titulo.includes('Terrazul') ? titulo : `${titulo} | Terrazul SpA`;
+
+/** Datos estructurados: ayudan a que Google muestre teléfono y dirección. */
+const datosEstructurados = {
+  '@context': 'https://schema.org',
+  '@type': 'GeneralContractor',
+  '@id': `${SITIO.url}/#empresa`,
+  name: EMPRESA.razonSocial,
+  alternateName: EMPRESA.nombreLargo,
+  url: SITIO.url,
+  description: SITIO.descripcion,
+  telephone: EMPRESA.telefonoE164,
+  email: EMPRESA.email,
+  image: `${SITIO.url}/og-terrazul.png`,
+  logo: `${SITIO.url}/logo-terrazul.svg`,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: EMPRESA.direccion.calle,
+    addressLocality: EMPRESA.direccion.comuna,
+    addressRegion: EMPRESA.direccion.region,
+    addressCountry: 'CL',
+  },
+  areaServed: [
+    { '@type': 'AdministrativeArea', name: 'Región del Biobío' },
+    { '@type': 'AdministrativeArea', name: 'Región de Ñuble' },
+  ],
+  sameAs: [EMPRESA.facebook],
+  knowsAbout: [
+    'Impermeabilización',
+    'Pisos industriales',
+    'Sellado de juntas',
+    'Refuerzos estructurales en fibra de carbono',
+    'Grouting de nivelación',
+  ],
+};
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+
+<title>{tituloCompleto}</title>
+<meta name="description" content={descripcion} />
+<link rel="canonical" href={canonica} />
+{noIndex && <meta name="robots" content="noindex, nofollow" />}
+
+<meta name="theme-color" content="#0C2745" />
+<meta name="author" content={EMPRESA.razonSocial} />
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="sitemap" href="/sitemap-index.xml" />
+
+<meta property="og:type" content={tipo} />
+<meta property="og:site_name" content={EMPRESA.nombreLargo} />
+<meta property="og:locale" content="es_CL" />
+<meta property="og:title" content={tituloCompleto} />
+<meta property="og:description" content={descripcion} />
+<meta property="og:url" content={canonica} />
+<meta property="og:image" content={imagenAbsoluta} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={tituloCompleto} />
+<meta name="twitter:description" content={descripcion} />
+<meta name="twitter:image" content={imagenAbsoluta} />
+
+<script
+  is:inline
+  type="application/ld+json"
+  set:html={JSON.stringify(datosEstructurados)}
+/>

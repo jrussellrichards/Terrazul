@@ -1,0 +1,95 @@
+---
+import MetaSeo from '../components/MetaSeo.astro';
+import Encabezado from '../components/Encabezado.astro';
+import PieDePagina from '../components/PieDePagina.astro';
+import '../styles/global.css';
+
+interface Props {
+  titulo: string;
+  descripcion: string;
+  imagen?: string;
+  tipo?: 'website' | 'article';
+  noIndex?: boolean;
+  heroOscuro?: boolean;
+}
+
+const { heroOscuro = false, ...seo } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es-CL">
+  <head>
+    <MetaSeo {...seo} />
+    <!-- Marca que hay JS antes del primer pintado: habilita las animaciones de
+         entrada. Sin esta clase el contenido se muestra directamente. -->
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+  <body class="min-h-screen">
+    <Encabezado sobreHeroOscuro={heroOscuro} />
+
+    <main id="contenido" class:list={[!heroOscuro && 'pt-[4.5rem] lg:pt-20']}>
+      <slot />
+    </main>
+
+    <PieDePagina />
+
+    <script>
+      /**
+       * Animación de entrada por sección.
+       * Se aplica solo si el elemento entra en viewport, y se respeta
+       * prefers-reduced-motion desde el CSS.
+       */
+      const objetivos = document.querySelectorAll<HTMLElement>('.revelar');
+
+      if (objetivos.length) {
+        const observador = new IntersectionObserver(
+          (entradas) => {
+            for (const entrada of entradas) {
+              if (!entrada.isIntersecting) continue;
+              entrada.target.classList.add('es-visible');
+              observador.unobserve(entrada.target);
+            }
+          },
+          { rootMargin: '0px 0px -12% 0px', threshold: 0.05 },
+        );
+
+        objetivos.forEach((el) => {
+          /**
+           * Escalonado por grupo, no global: el retardo depende de la posición
+           * del elemento entre sus hermanos animados. Así cada grilla, lista o
+           * tabla cascadea completa en vez de reiniciarse cada cuatro elementos.
+           */
+          const hermanos = Array.from(el.parentElement?.children ?? []).filter((n) =>
+            n.classList.contains('revelar'),
+          );
+          const posicion = Math.max(0, hermanos.indexOf(el));
+          el.style.transitionDelay = `${Math.min(posicion, 6) * 70}ms`;
+          observador.observe(el);
+        });
+      }
+
+      /**
+       * Piezas con animación en bucle.
+       * A diferencia del observador de arriba, este NO deja de observar: tiene
+       * que apagar los bucles cuando la pieza sale de pantalla. Si no, cuatro
+       * figuras seguirían animándose durante toda la visita, gastando CPU y
+       * batería sin que nadie las vea.
+       */
+      const enBucle = document.querySelectorAll<HTMLElement>('.pieza');
+
+      if (enBucle.length && 'IntersectionObserver' in window) {
+        const vigia = new IntersectionObserver(
+          (entradas) => {
+            for (const entrada of entradas) {
+              entrada.target.classList.toggle('fuera-de-vista', !entrada.isIntersecting);
+            }
+          },
+          { rootMargin: '120px 0px' },
+        );
+        enBucle.forEach((el) => vigia.observe(el));
+      }
+    </script>
+  </body>
+</html>
